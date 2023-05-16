@@ -1,0 +1,13 @@
+.mainContainer{
+    background-color:rgb(241 245 249)
+
+}
+
+.primaryContainer{
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    width: 75%;
+    max-width: auto;
+
+}
