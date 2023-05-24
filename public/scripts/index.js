@@ -1,5 +1,64 @@
 const form = document.getElementById("todoForm")
 const toDoContainer = document.getElementById("toDoContainer")
+const localStorageKey = "todo-list"
+
+const isDataValid = (todo) => {
+    const idValid = typeof todo?.id === "string" && todo?.id
+    const isValueValid = typeof todo?.value === "string" && todo?.value
+    const isDoneValid = typeof todo?.done === "boolean"
+
+    return idValid && isValueValid && isDoneValid
+}
+
+const getDataFromLocalStorage = () => {
+    try {
+        // return JSON.parse(localStorage.getItem(localStorageKey))
+        const strVal = localStorage.getItem(localStorageKey)
+        if (!strVal) {
+            return []
+        }
+        const objVal = JSON.parse(strVal)
+        if (!Array.isArray(objVal)) {
+            localStorage.removeItem(localStorageKey)
+            return []
+
+        }
+
+        //array
+        const newData = []
+        objVal.forEach(val => {
+            const isValid = isDataValid(val)
+            if (isValid) {
+                newData.push(val)
+            }
+        })
+
+
+        return newData
+    } catch (err) {
+        localStorage.removeItem(localStorageKey)
+        return []
+    }
+}
+
+const todos = getDataFromLocalStorage()
+
+
+
+const renderToDo = () => {
+    // for (let i = 0; i < todos.length; i++){
+    //     const todo = todos[i]
+    //     console.log(`index ${i} value:`, todo)
+    // },
+    toDoContainer.innerHTML = ""
+    todos.forEach((todo, i) => {
+        toDoContainer.innerHTML += getHtml(todo.value)
+
+
+    })
+}
+
+
 
 const getHtml = (input) => {
     return `<div class="flex flex-row items-center justify-between pr-2 w-4/12 mx-auto mt-2 bg-white">
@@ -26,12 +85,21 @@ form.addEventListener("submit", (event) => {
     event.preventDefault()
     const data = new FormData(form)
     const textData = data.get("userInput")
-    if(!textData){
+    if (!textData) {
         alert("Enter The Value")
     } else {
         // toDoContainer.innerHTML = toDoContainer.innerHTML + getHtml(textData)
-    toDoContainer.innerHTML += getHtml(textData)
-    form.reset()
+        // toDoContainer.innerHTML += getHtml(textData)
+        todos.push({
+            id: crypto.randomUUID(),
+            value: textData,
+            done: false,
+
+        })
+        localStorage.setItem(localStorageKey, JSON.stringify(todos))
+        form.reset()
+        renderToDo()
     }
 
 })
+renderToDo()
