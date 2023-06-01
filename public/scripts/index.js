@@ -41,7 +41,7 @@ const getDataFromLocalStorage = () => {
     }
 }
 
-const todos = getDataFromLocalStorage()
+let todos = getDataFromLocalStorage()
 
 
 
@@ -100,8 +100,24 @@ const getHtml = (todo) => {
             localStorage.setItem(localStorageKey, JSON.stringify(todos))
             renderToDo()
         })
+        //changes
+    } else {
+        const undoIconHtml = newDiv.querySelector(".undoIcon")
+        undoIconHtml.addEventListener("click", () => {
+            todo.done = false
+            localStorage.setItem(localStorageKey, JSON.stringify(todos))
+            renderToDo()
+        })
     }
+    
+    const deleteIconHtml = newDiv.querySelector(".deleteIcon")
+    deleteIconHtml.addEventListener("click", () => {
+        todos = todos.filter(t => t.id !== todo.id)
+        localStorage.setItem(localStorageKey, JSON.stringify(todos))
+        renderToDo()
+    })
     return newDiv
+
 }
 
 form.addEventListener("submit", (event) => {
